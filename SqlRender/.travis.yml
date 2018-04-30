@@ -1,0 +1,24 @@
+language: R
+cache: packages
+sudo: false
+
+r_packages:
+  - covr
+  - drat
+
+before_install:
+  - Rscript -e 'update.packages(ask = FALSE)'
+  - export LD_LIBRARY_PATH=$JAVA_HOME:$LD_LIBRARY_PATH
+
+notifications:
+  recipients:
+  - msuchard@gmail.com
+  - schuemie@ohdsi.org
+  email:
+    on_success: change
+    on_failure: change
+
+after_success:
+  - Rscript -e 'covr::codecov()'
+  - curl --data "build=true" -X POST https://registry.hub.docker.com/u/ohdsi/broadsea-methodslibrary/trigger/f0b51cec-4027-4781-9383-4b38b42dd4f5/
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash deploy.sh

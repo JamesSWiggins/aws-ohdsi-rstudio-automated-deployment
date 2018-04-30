@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" type="text/css" href="js/styles/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/bootstrap-theme.min.css">
+	<link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" />
+	<link rel="stylesheet" type="text/css" href="js/styles/jquery.dataTables.min.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/buttons.dataTables.min.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/atlas.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/chart.css">
+	<link rel="stylesheet" type="text/css" href="js/styles/achilles.css">
+
+	<title data-bind="text: pageTitle">ATLAS</title>
+</head>
+
+<body>
+	<div id="splash" data-bind="if:!initializationComplete()">
+		<div id="stage">
+			<img src="images/atlas_loading.svg" />
+		</div>
+		<div id="heading">
+			<a href="#/search">ATLAS</a>
+		</div>
+		<div data-bind="text:applicationStatus" id="status"></div>
+	</div>
+
+	<div id="wrapperLeftMenu" style="display:none;" data-bind="visible:initializationComplete()">
+		<div id="wrapperLogo">
+			<a href="#/home">ATLAS</a>
+		</div>
+
+		<div class="list-group">
+			<a class="list-group-item" href="#/home"><i class="fa fa-fw fa-home" aria-hidden="true"></i>&nbsp;Home</a>
+			<a class="list-group-item" href="#/datasources"><i class="fa fa-fw fa-database" aria-hidden="true"></i>&nbsp;Data Sources</a>
+			<a class="list-group-item" href="#/search"><i class="fa fa-fw fa-search" aria-hidden="true"></i>&nbsp;Vocabulary</a>
+			<a class="list-group-item" href="#/conceptsets"><i class="fa fa-fw fa-shopping-cart" aria-hidden="true"></i>&nbsp;Concept Sets</a>
+			<a class="list-group-item" href="#/cohortdefinitions"><i class="fa fa-fw  fa-users" aria-hidden="true"></i>&nbsp;Cohort Definitions</a>
+			<a class="list-group-item" data-bind="css: irStatusCss, attr: {href: irAnalysisURL}"><i class="fa fa-fw fa-bolt" aria-hidden="true"></i>&nbsp;Incidence Rates</a>
+			<a class="list-group-item" href="#/profiles"><i class="fa fa-fw fa-user" aria-hidden="true"></i>&nbsp;Profiles</a>
+			<a class="list-group-item" data-bind="css: ccaCss, attr: {href: ccaURL}"><i class="fa fa-fw fa-balance-scale" aria-hidden="true"></i>&nbsp;Estimation</a>
+			<a class="list-group-item" data-bind="css: plpCss, attr: {href: plpURL}"><i class="fa fa-fw fa-heartbeat" aria-hidden="true"></i>&nbsp;Prediction</a>
+			<a class="list-group-item" href="#/jobs"><i class="fa fa-fw fa-tasks" aria-hidden="true"></i>&nbsp;Jobs</a>
+			<a class="list-group-item" href="#/configure"><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>&nbsp;Configuration</a>
+			<a class="list-group-item" target="_blank" data-bind="attr: {href: supportURL}" aria-hidden="true"><i class="fa fa-fw fa-comment"></i>&nbsp;Feedback</a>
+		</div>
+
+		<div id="wrapper_ohdsi">
+			<div><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></div>
+			<div style="margin-bottom:10px;">open source software</div>
+
+			<div>provided by</div>
+			<div><a href="http://www.ohdsi.org"><img src="images/ohdsi_color.png"></a></div>
+			<div><a href="http://www.ohdsi.org">join the journey</a></div>
+		</div>
+	</div>
+
+	<div id="wrapperMainWindow" style="display:none;" data-bind="visible:initializationComplete()">
+		<div id="wrapperMainWindowContainer">
+			<user-bar params="{model: pageModel}"></user-bar>
+			<div data-bind="if:sharedState.appInitializationStatus() == 'failed'">
+				<div style="width:100px;margin-left:auto;margin-right:auto;">
+					<svg width="100" height="100" viewBox="0 -200 400 400">
+					<g id="rings">
+						<circle cx="205" cy="17" r="165" stroke="#800" fill="none" stroke-width="15px"></circle>
+
+						<ellipse cx="205" cy="17" rx="70" ry="70" stroke="#f00" fill="none" stroke-width="6px" stroke-opacity="0.4">
+						</ellipse>
+
+						<ellipse cx="205" cy="17" rx="100" ry="100" stroke="#c00" fill="none" stroke-width="10px" stroke-opacity="0.4">
+						</ellipse>
+
+						<ellipse cx="205" cy="17" rx="135" ry="135" stroke="#800" fill="none" stroke-width="12px" stroke-opacity="0.4">
+						</ellipse>
+					</g>
+				</svg>
+				</div>
+				<div class="error">application initialization failed</div>
+				<div class="error">
+					<p>unable to connect to an instance of the webapi.</p>
+					<p>please contact your administrator to resolve this issue.</p>
+				</div>
+			</div>
+
+			<div data-bind="if:sharedState.appInitializationStatus() == 'no-sources-available'">
+				<div style="width:100px;margin-left:auto;margin-right:auto;">
+					<svg width="100" height="100" viewBox="0 -200 400 400">
+					<g id="rings">
+						<circle cx="205" cy="17" r="165" stroke="#800" fill="none" stroke-width="15px"></circle>
+
+						<ellipse cx="205" cy="17" rx="70" ry="70" stroke="#f00" fill="none" stroke-width="6px" stroke-opacity="0.4">
+						</ellipse>
+
+						<ellipse cx="205" cy="17" rx="100" ry="100" stroke="#c00" fill="none" stroke-width="10px" stroke-opacity="0.4">
+						</ellipse>
+
+						<ellipse cx="205" cy="17" rx="135" ry="135" stroke="#800" fill="none" stroke-width="12px" stroke-opacity="0.4">
+						</ellipse>
+					</g>
+				</svg>
+				</div>
+				<div class="error">application initialization failed</div>
+				<div class="error">
+					<p>the current webapi has no sources defined.</p>
+					<p>please contact your administrator to resolve this issue.</p>
+				</div>
+			</div>
+
+			<!-- ko if: pageModel.currentCohortDefinition() || pageModel.currentConceptSet() -->
+			<!-- ko if: pageModel.currentCohortDefinition() != null && pageModel.currentView() !='cohort-definition-manager' && pageModel.currentView() != 'loading' -->
+			<div class="breadcrumb-container">
+				<i class="fa fa-arrow-left"></i>
+				<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id()}, text: pageModel.currentCohortDefinition().name"></a>
+				<!-- ko if: pageModel.currentConceptSet() != null && pageModel.currentConceptSetSource() == 'cohort' -->
+				<i class="fa fa-chevron-right"></i>
+				<a data-bind="attr: { href: '#/cohortdefinition/' + pageModel.currentCohortDefinition().id() + '/conceptsets/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name()"></a>
+				<!-- /ko -->
+			</div>
+			<!-- /ko -->
+			<!-- ko if: pageModel.currentConceptSet() && pageModel.currentConceptSetSource() == 'repository' && pageModel.currentView() != 'conceptset-manager' -->
+			<div class="breadcrumb-container">
+				<i class="fa fa-arrow-left"></i>
+				<a data-bind="attr: { href: '#/conceptset/' + pageModel.currentConceptSet().id + '/details'}, text:pageModel.currentConceptSet().name"></a>
+			</div>
+			<!-- /ko -->
+			<!-- /ko -->
+
+			<!-- ko if: pageModel.currentView && (sharedState.appInitializationStatus() != 'failed' && sharedState.appInitializationStatus() != 'no-sources-available') -->
+			<div id="currentComponent" data-bind='component: {name: pageModel.currentView,params: pageModel.componentParams}'></div>
+			<!-- /ko -->
+		</div>
+	</div>
+	<script data-main="js/main" src="js/require.js"></script>
+</body>
+
+</html>
