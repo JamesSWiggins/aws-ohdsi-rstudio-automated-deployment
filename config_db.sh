@@ -26,6 +26,7 @@ echo "ACCT_ID=" $ACCT_ID
 echo "BUCKET_NAME=" $BUCKET_NAME
 echo "DATABASE_PASSWORD=" $DATABASE_PASSWORD
 echo "RS_ROLE_ARN=" $RS_ROLE_ARN
+echo "RSTUDIO_TARGET_GROUP_ARN=" $RSTUDIO_TARGET_GROUP_ARN
 export AWS_DEFAULT_REGION=$(echo $EB_ENDPOINT | cut -d . -f2)
 
 #Deploy the OMOP CDM Schema to Redshift
@@ -70,8 +71,25 @@ fi
 #Run Achilles R script to enabled Data Source visualization
 sed -i 's!REDSHIFT_ENDPOINT!'$REDSHIFT_ENDPOINT'!' achilles.r
 sed -i 's!DATABASE_PASSWORD!'$DATABASE_PASSWORD'!' achilles.r
-yum -y install openssl-devel
-yum -y install libcurl-devel
-sudo yum-config-manager --disable amzn-updates
-yum -y install R
+date > /tmp/rstudio_sparklyr_emr5.tmp
+export MAKE='make -j 8'
+sudo yum install -y xorg-x11-xauth.x86_64 xorg-x11-server-utils.x86_64 xterm libXt libX11-devel libXt-devel libcurl-devel git compat-gmp4 compat-libffi5 openssl-devel
+sudo yum install -y R R-core R-core-devel R-devel libxml2-devel
+if [ -f /usr/lib64/R/etc/Makeconf.rpmnew ]; then
+sudo cp /usr/lib64/R/etc/Makeconf.rpmnew /usr/lib64/R/etc/Makeconf
+fi
+if [ -f /usr/lib64/R/etc/ldpaths.rpmnew ]; then
+sudo cp /usr/lib64/R/etc/ldpaths.rpmnew /usr/lib64/R/etc/ldpaths
+fi
+sudo yum install -y gcc gcc-c++ gcc-gfortran readline-devel cairo-devel libpng-devel libjpeg-devel libtiff-devel
+sudo sed -i 's/make/make -j 8/g' /usr/lib64/R/etc/Renviron
+# set unix environment variables
+sudo su << BASH_SCRIPT
+echo '
+export JAVA_HOME=/etc/alternatives/jre
+' >> /etc/profile
+BASH_SCRIPT
+sudo sh -c "source /etc/profile"
+# fix java binding - R and packages have to be compiled with the same java version as hadoop
+sudo R CMD javareconf
 Rscript achilles.r 

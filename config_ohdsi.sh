@@ -26,7 +26,6 @@ echo "BUCKET_NAME=" $BUCKET_NAME
 echo "DATABASE_PASSWORD=" $DATABASE_PASSWORD
 export AWS_DEFAULT_REGION=$(echo $EB_ENDPOINT | cut -d . -f2)
 
-#sudo yum -y update
 sudo yum install -y postgresql
 export PGPASSWORD=$DATABASE_PASSWORD
 psql -d postgres --host=$RDS_ENDPOINT --port=5432 -U master -a -f postgres_init_master.sql 
